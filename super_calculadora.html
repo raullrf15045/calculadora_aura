@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>67 AURA • GOD MODE</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@600;800;900&family=Rajdhani:wght@500;600;700&display=swap');
+
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #03010a;
+    font-family: 'Rajdhani', sans-serif;
+    color: #fff;
+    overflow: hidden;
+    padding: 16px;
+    position: relative;
+  }
+
+  /* ===== BACKGROUND EFFECTS ===== */
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+  }
+
+  .glow {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.4;
+    pointer-events: none;
+  }
+
+  .glow-1 {
+    width: 500px;
+    height: 500px;
+    background: #8b00ff;
+    top: -180px;
+    left: -120px;
+    animation: move1 14s ease-in-out infinite;
+  }
+
+  .glow-2 {
+    width: 450px;
+    height: 450px;
+    background: #ff008c;
+    bottom: -150px;
+    right: -100px;
+    animation: move2 18s ease-in-out infinite;
+  }
+
+  .glow-3 {
+    width: 300px;
+    height: 300px;
+    background: #00d4ff;
+    top: 40%;
+    left: 60%;
+    opacity: 0.15;
+    animation: move3 20s ease-in-out infinite;
+  }
+
+  @keyframes move1 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(100px, 80px); }
+  }
+  @keyframes move2 {
+    0%, 100% { transform: translate(0, 0); }
+    50% { transform: translate(-90px, -70px); }
+  }
+  @keyframes move3 {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-60px, 40px) scale(1.2); }
+  }
+
+  /* Floating particles in background */
+  .bg-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    background: rgba(200, 120, 255, 0.6);
+    border-radius: 50%;
+    pointer-events: none;
+    animation: floatUp linear infinite;
+  }
+
+  @keyframes floatUp {
+    0% {
+      transform: translateY(100vh) scale(0.5);
+      opacity: 0;
+    }
+    10% { opacity: 0.7; }
+    90% { opacity: 0.5; }
+    100% {
+      transform: translateY(-10vh) scale(1.2);
+      opacity: 0;
+    }
+  }
+
+  /* Scanlines */
+  body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.012) 3px
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  /* ===== CALCULATOR ===== */
+  .calculator {
+    position: relative;
+    width: 100%;
+    max-width: 380px;
+    padding: 24px 20px;
+    border-radius: 36px;
+    background: linear-gradient(165deg, rgba(45, 28, 80, 0.75), rgba(12, 6, 28, 0.92));
+    border: 1px solid rgba(180, 90, 255, 0.35);
+    box-shadow:
+      0 0 50px rgba(140, 40, 255, 0.22),
+      0 0 120px rgba(100, 0, 220, 0.12),
+      inset 0 1px 0 rgba(255,255,255,0.08);
+    backdrop-filter: blur(24px);
+    z-index: 5;
+    transition: box-shadow 0.4s ease;
+  }
+
+  .calculator.level-flash {
+    animation: levelPulse 0.7s ease;
+  }
+
+  @keyframes levelPulse {
+    0% { box-shadow: 0 0 0 0 rgba(255, 0, 255, 0.6); }
+    40% { box-shadow: 0 0 80px 30px rgba(255, 50, 255, 0.35); }
+    100% { box-shadow: 0 0 50px rgba(140, 40, 255, 0.22); }
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  .header h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 28px;
+    font-weight: 900;
+    letter-spacing: 5px;
+    background: linear-gradient(90deg, #f0c0ff, #ff66ff, #c080ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 12px rgba(220, 100, 255, 0.5));
+  }
+
+  .header p {
+    font-size: 11px;
+    letter-spacing: 6px;
+    color: #b48cff;
+    margin-top: 6px;
+    font-weight: 600;
+  }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 14px;
+    font-size: 14px;
+    font-weight: 600;
+    color: #d4b8ff;
+  }
+
+  .stats b {
+    color: #ff9eff;
+    font-weight: 700;
+  }
+
+  #display-box {
+    position: relative;
+    margin-bottom: 18px;
+  }
+
+  #history {
+    position: absolute;
+    top: 10px;
+    left: 16px;
+    font-size: 12px;
+    color: #9b7bcf;
+    opacity: 0.75;
+    max-width: 70%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    pointer-events: none;
+  }
+
+  #display {
+    width: 100%;
+    height: 96px;
+    background: rgba(6, 3, 16, 0.85);
+    border: 2px solid rgba(160, 70, 255, 0.45);
+    border-radius: 20px;
+    color: #f5eaff;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 34px;
+    font-weight: 700;
+    text-align: right;
+    padding: 28px 18px 12px;
+    box-shadow:
+      inset 0 0 30px rgba(120, 40, 255, 0.18),
+      0 0 25px rgba(140, 50, 255, 0.12);
+    letter-spacing: 1px;
+  }
+
+  .buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 11px;
+  }
+
+  button {
+    height: 66px;
+    border: none;
+    border-radius: 18px;
+    background: linear-gradient(160deg, #3d2f62, #241a3d);
+    color: #fff;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 23px;
+    font-weight: 700;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.12s ease, filter 0.15s ease;
+    box-shadow: 0 6px 0 #140e24;
+  }
+
+  button::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(255,255,255,0.12), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  button:hover::after {
+    opacity: 1;
+  }
+
+  button:active {
+    transform: translateY(4px);
+    box-shadow: 0 2px 0 #140e24;
+  }
+
+  .operator {
+    background: linear-gradient(160deg, #a040ff, #6418c8);
+    box-shadow: 0 6px 0 #3c0a8a;
+  }
+  .operator:active { box-shadow: 0 2px 0 #3c0a8a; }
+
+  .clear {
+    background: linear-gradient(160deg, #ff2e5b, #b00032);
+    box-shadow: 0 6px 0 #6e001c;
+  }
+  .clear:active { box-shadow: 0 2px 0 #6e001c; }
+
+  .equal {
+    background: linear-gradient(160deg, #e800ff, #8c00c8);
+    box-shadow: 0 6px 0 #5a0080;
+  }
+  .equal:active { box-shadow: 0 2px 0 #5a0080; }
+
+  .aura67 {
+    background: linear-gradient(160deg, #ff00d0, #7a00ff);
+    box-shadow: 0 6px 0 #4a0099;
+    font-weight: 900;
+    letter-spacing: 1px;
+  }
+  .aura67:active { box-shadow: 0 2px 0 #4a0099; }
+
+  .func {
+    background: linear-gradient(160deg, #2e2548, #1a152c);
+    color: #d4b8ff;
+    font-size: 18px;
+  }
+
+  .memory {
+    font-size: 15px;
+    background: linear-gradient(160deg, #2a2240, #18122a);
+    color: #c9a8ff;
+  }
+
+  .wide {
+    grid-column: span 2;
+  }
+
+  .footer {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: #9b7bcf;
+    font-weight: 600;
+  }
+
+  /* ===== AURA MODE ===== */
+  #aura {
+    position: fixed;
+    inset: 0;
+    display: none;
+    z-index: 100;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: radial-gradient(circle at center, #a000ff 0%, #2e0066 35%, #05000a 100%);
+    overflow: hidden;
+  }
+
+  #aura.active {
+    display: flex;
+    animation: auraIn 0.25s ease;
+  }
+
+  @keyframes auraIn {
+    from { opacity: 0; transform: scale(1.1); }
+    to { opacity: 1; transform: scale(1); }
+  }
+
+  #aura h1 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(150px, 34vw, 300px);
+    font-weight: 900;
+    color: #fff;
+    line-height: 0.85;
+    text-shadow:
+      0 0 20px #fff,
+      0 0 60px #ff00ff,
+      0 0 140px #a000ff;
+    animation: power 0.35s infinite alternate;
+  }
+
+  #aura h2 {
+    font-family: 'Orbitron', sans-serif;
+    font-size: clamp(20px, 5.5vw, 40px);
+    letter-spacing: 7px;
+    margin-top: 8px;
+    text-shadow: 0 0 30px rgba(255,255,255,0.8);
+    animation: shakeText 0.09s infinite;
+  }
+
+  #aura p {
+    color: #ffc0ff;
+    letter-spacing: 5px;
+    margin-top: 16px;
+    font-size: 16px;
+    font-weight: 700;
+  }
+
+  #aura button {
+    margin-top: 42px;
+    padding: 0 36px;
+    height: 54px;
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.55);
+    border-radius: 40px;
+    font-size: 15px;
+    letter-spacing: 2px;
+    box-shadow: none;
+    color: #fff;
+  }
+
+  @keyframes power {
+    from { transform: scale(1) rotate(-1.8deg); }
+    to   { transform: scale(1.14) rotate(1.8deg); }
+  }
+
+  @keyframes shakeText {
+    0%   { transform: translate(2px, 1px); }
+    25%  { transform: translate(-3px, -2px); }
+    50%  { transform: translate(2px, -1px); }
+    75%  { transform: translate(-2px, 2px); }
+    100% { transform: translate(1px, -2px); }
+  }
+
+  .particle {
+    position: absolute;
+    font-size: 30px;
+    pointer-events: none;
+    animation: fly 2.1s linear forwards;
+    z-index: 101;
+  }
+
+  @keyframes fly {
+    0% {
+      transform: translateY(0) rotate(0deg) scale(1);
+      opacity: 1;
+    }
+    100% {
+      transform: translateY(-130vh) rotate(720deg) scale(0.2);
+      opacity: 0;
+    }
+  }
+
+  .shake-body {
+    animation: screenShake 0.09s infinite;
+  }
+
+  @keyframes screenShake {
+    0%, 100% { transform: translate(0, 0); }
+    25% { transform: translate(6px, -5px); }
+    50% { transform: translate(-6px, 5px); }
+    75% { transform: translate(5px, 6px); }
+  }
+
+  /* Flash overlay during aura */
+  .flash {
+    position: fixed;
+    inset: 0;
+    background: white;
+    opacity: 0;
+    pointer-events: none;
+    z-index: 99;
+  }
+
+  .flash.active {
+    animation: flashAnim 0.4s ease-out;
+  }
+
+  @keyframes flashAnim {
+    0% { opacity: 0.7; }
+    100% { opacity: 0; }
+  }
+
+  @media (max-width: 400px) {
+    .calculator { padding: 18px 14px; }
+    button { height: 60px; font-size: 21px; }
+    #display { height: 88px; font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+  <div class="bg-layer">
+    <div class="glow glow-1"></div>
+    <div class="glow glow-2"></div>
+    <div class="glow glow-3"></div>
+  </div>
+
+  <div class="flash" id="flash"></div>
+
+  <div class="calculator" id="calc">
+    <div class="header">
+      <h1>⚡ 67 AURA</h1>
+      <p>ULTIMATE GOD MODE</p>
+    </div>
+
+    <div class="stats">
+      <span>👑 AURA: <b id="score">0</b></span>
+      <span>🔥 LEVEL: <b id="level">1</b></span>
+    </div>
+
+    <div id="display-box">
+      <div id="history"></div>
+      <input id="display" readonly placeholder="0">
+    </div>
+
+    <div class="buttons">
+      <button class="memory" onclick="memoryClear()">MC</button>
+      <button class="memory" onclick="memoryRecall()">MR</button>
+      <button class="memory" onclick="memoryAdd()">M+</button>
+      <button class="memory" onclick="memorySub()">M−</button>
+
+      <button class="clear" onclick="clearAll()">AC</button>
+      <button class="func" onclick="toggleSign()">±</button>
+      <button class="func" onclick="percent()">%</button>
+      <button class="operator" onclick="append('/')">÷</button>
+
+      <button class="func" onclick="square()">x²</button>
+      <button class="func" onclick="sqrt()">√</button>
+      <button class="func" onclick="append('(')">(</button>
+      <button class="func" onclick="append(')')">)</button>
+
+      <button onclick="append('7')">7</button>
+      <button onclick="append('8')">8</button>
+      <button onclick="append('9')">9</button>
+      <button class="operator" onclick="append('*')">×</button>
+
+      <button onclick="append('4')">4</button>
+      <button onclick="append('5')">5</button>
+      <button onclick="append('6')">6</button>
+      <button class="operator" onclick="append('-')">−</button>
+
+      <button onclick="append('1')">1</button>
+      <button onclick="append('2')">2</button>
+      <button onclick="append('3')">3</button>
+      <button class="operator" onclick="append('+')">+</button>
+
+      <button class="wide" onclick="append('0')">0</button>
+      <button onclick="append('.')">.</button>
+      <button class="equal" onclick="calculate()">=</button>
+
+      <button class="aura67" onclick="append('67')">67</button>
+      <button class="func" onclick="append('Math.PI')">π</button>
+      <button class="func" onclick="backspace()">⌫</button>
+    </div>
+
+    <div class="footer">
+      ⚡ NO LIMITS · MAXIMUM AURA ⚡
+    </div>
+  </div>
+
+  <!-- AURA OVERLAY -->
+  <div id="aura">
+    <h1>67</h1>
+    <h2>THE AURA IS UNMATCHED</h2>
+    <p>☠️ MAXIMUM SIGMA OVERDRIVE ☠️</p>
+    <h2>NO ONE CAN STOP HIM</h2>
+    <button onclick="closeAura()">RETURN TO REALITY</button>
+  </div>
+
+<script>
+  const display = document.getElementById("display");
+  const historyEl = document.getElementById("history");
+  const aura = document.getElementById("aura");
+  const calc = document.getElementById("calc");
+  const flash = document.getElementById("flash");
+
+  let score = 0;
+  let level = 1;
+  let memory = 0;
+  let cooldown = false;
+
+  // Create floating background particles
+  function createBgParticles() {
+    const layer = document.querySelector('.bg-layer');
+    for (let i = 0; i < 35; i++) {
+      const p = document.createElement('div');
+      p.className = 'bg-particle';
+      p.style.left = Math.random() * 100 + 'vw';
+      p.style.animationDuration = (8 + Math.random() * 14) + 's';
+      p.style.animationDelay = (Math.random() * 10) + 's';
+      p.style.width = p.style.height = (1.5 + Math.random() * 3) + 'px';
+      layer.appendChild(p);
+    }
+  }
+  createBgParticles();
+
+  function updateStats() {
+    document.getElementById("score").textContent = score;
+    const newLevel = Math.floor(score / 150) + 1;
+    if (newLevel > level) {
+      level = newLevel;
+      calc.classList.add("level-flash");
+      setTimeout(() => calc.classList.remove("level-flash"), 700);
+      sound(1300, "triangle", 0.2);
+    }
+    document.getElementById("level").textContent = level;
+  }
+
+  function sound(freq = 480, type = "sine", duration = 0.11) {
+    try {
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.frequency.value = freq;
+      osc.type = type;
+      gain.gain.setValueAtTime(0.065, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
+      osc.start();
+      osc.stop(ctx.currentTime + duration);
+      osc.onended = () => ctx.close();
+    } catch {}
+  }
+
+  function append(value) {
+    if (display.value === "ERROR" || display.value === "Infinity") display.value = "";
+    display.value += value;
+    sound(400 + Math.random() * 90);
+    checkAura();
+  }
+
+  function clearAll() {
+    display.value = "";
+    historyEl.textContent = "";
+    sound(260);
+  }
+
+  function backspace() {
+    display.value = display.value.slice(0, -1);
+    sound(340);
+  }
+
+  function toggleSign() {
+    if (!display.value) return;
+    display.value = display.value.startsWith("-") 
+      ? display.value.slice(1) 
+      : "-" + display.value;
+    sound(480);
+  }
+
+  function percent() {
+    const val = parseFloat(display.value);
+    if (!isNaN(val)) {
+      display.value = (val / 100).toString();
+      sound(520);
+    }
+  }
+
+  function square() {
+    const val = parseFloat(display.value);
+    if (!isNaN(val)) {
+      display.value = (val * val).toString();
+      score += 5;
+      updateStats();
+      sound(580);
+      checkAura();
+    }
+  }
+
+  function sqrt() {
+    const val = parseFloat(display.value);
+    if (!isNaN(val) && val >= 0) {
+      display.value = Math.sqrt(val).toString();
+      score += 5;
+      updateStats();
+      sound(600);
+      checkAura();
+    }
+  }
+
+  function memoryClear() { memory = 0; sound(290); }
+  function memoryRecall() { display.value = memory.toString(); sound(430); }
+  function memoryAdd() {
+    const val = parseFloat(display.value);
+    if (!isNaN(val)) { memory += val; sound(560); }
+  }
+  function memorySub() {
+    const val = parseFloat(display.value);
+    if (!isNaN(val)) { memory -= val; sound(390); }
+  }
+
+  function calculate() {
+    try {
+      let expr = display.value;
+      if (!expr) return;
+
+      if (!/^[0-9+\-*/.()%\sMath\.PI]+$/.test(expr.replace(/Math\.PI/g, "1"))) {
+        throw new Error();
+      }
+
+      const result = Function('"use strict"; return (' + expr + ')')();
+      if (!Number.isFinite(result)) throw new Error();
+
+      historyEl.textContent = expr + " =";
+      display.value = Number(result.toPrecision(12)).toString();
+
+      score += 12;
+      updateStats();
+      sound(760, "triangle", 0.16);
+
+      if (display.value === "67" || display.value.includes("67")) {
+        score += 670;
+        updateStats();
+        activateAura();
+      } else {
+        checkAura();
+      }
+    } catch {
+      display.value = "ERROR";
+      sound(130, "sawtooth", 0.18);
+    }
+  }
+
+  function checkAura() {
+    if (display.value.includes("67") && !cooldown) {
+      activateAura();
+    }
+  }
+
+  function activateAura() {
+    if (cooldown) return;
+    cooldown = true;
+
+    // Flash
+    flash.classList.add("active");
+    setTimeout(() => flash.classList.remove("active"), 400);
+
+    aura.classList.add("active");
+    document.body.classList.add("shake-body");
+
+    score += 67;
+    updateStats();
+    sound(1150, "square", 0.28);
+
+    const emojis = ["⚡", "🔥", "💀", "67", "🗿", "👑", "✨", "💥", "🌌", "☠️", "💜"];
+    for (let i = 0; i < 110; i++) {
+      const p = document.createElement("div");
+      p.className = "particle";
+      p.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      p.style.left = Math.random() * 100 + "vw";
+      p.style.top = (25 + Math.random() * 55) + "vh";
+      p.style.fontSize = (22 + Math.random() * 32) + "px";
+      p.style.animationDuration = (1.2 + Math.random() * 1.9) + "s";
+      aura.appendChild(p);
+      setTimeout(() => p.remove(), 3200);
+    }
+
+    setTimeout(() => {
+      closeAura();
+      cooldown = false;
+    }, 4300);
+  }
+
+  function closeAura() {
+    aura.classList.remove("active");
+    document.body.classList.remove("shake-body");
+  }
+
+  // Keyboard
+  document.addEventListener("keydown", (e) => {
+    if (e.key >= "0" && e.key <= "9") append(e.key);
+    else if (e.key === ".") append(".");
+    else if (e.key === "+") append("+");
+    else if (e.key === "-") append("-");
+    else if (e.key === "*") append("*");
+    else if (e.key === "/") append("/");
+    else if (e.key === "Enter" || e.key === "=") calculate();
+    else if (e.key === "Backspace") backspace();
+    else if (e.key === "Escape") clearAll();
+    else if (e.key === "(") append("(");
+    else if (e.key === ")") append(")");
+  });
+</script>
+</body>
+</html>
